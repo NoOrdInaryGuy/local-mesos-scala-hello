@@ -88,6 +88,8 @@ At the prompt:
 run "/bin/echo 'Hello, World!'"
 ```
 
+This blocks until a suitable offer is received to run it. You can verify this by running `docker stop` on the slave, invoking the run command (it will block), then running `docker start` on the slave.
+
 ### Check the Log
 
 * Find the most recently completed framework in the UI: [http://172.20.0.11:5050/#/frameworks](http://172.20.0.11:5050/#/frameworks)

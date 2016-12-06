@@ -17,16 +17,11 @@ class ScalaScheduler extends Scheduler {
   override def frameworkMessage(driver: SchedulerDriver, executorId: ExecutorID, slaveId: SlaveID, data: Array[Byte]) {}
 
   override def statusUpdate(driver: SchedulerDriver, status: TaskStatus) {
-    println(s"received status update $status")
+    println(s"Received status update: $status")
   }
 
   override def offerRescinded(driver: SchedulerDriver, offerId: OfferID) {}
 
-  /**
-    *
-    * This callback is called when resources are available to  run tasks
-    *
-    */
   override def resourceOffers(driver: SchedulerDriver, offers: java.util.List[Offer]) {
     //for every available offer run tasks
     for (offer <- offers.asScala) {
@@ -38,7 +33,9 @@ class ScalaScheduler extends Scheduler {
           val cmd = CommandInfo.newBuilder
             .setValue(cmdString)
 
-          //our task will use one cpu
+          // TODO this code doesn't check the offer contains these resources, but it probably does
+
+          // Request 1 CPU
           val cpus = Resource.newBuilder.
             setType(org.apache.mesos.Protos.Value.Type.SCALAR)
             .setName("cpus")
@@ -46,10 +43,10 @@ class ScalaScheduler extends Scheduler {
             .setRole("*")
             .build
 
-          //generate random task id
+          // Generate a task id
           val id = "task" + System.currentTimeMillis()
 
-          //create task with given command
+          // Create task with given command via protobuf builder
           val task = TaskInfo.newBuilder
             .setCommand(cmd)
             .setName(id)
@@ -58,6 +55,7 @@ class ScalaScheduler extends Scheduler {
             .setSlaveId(offer.getSlaveId)
             .build
 
+          // Launch
           driver.launchTasks(List(offer.getId).asJava, List(task).asJava)
         }
       })
