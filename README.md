@@ -1,6 +1,6 @@
 # Local Mesos Scala Hello World
 
-This repository contains instructions to spin up a local Mesos cluster using Docker, and provides simple code a custom `Scheduler` that allows the traditional "Hello, World!" to be submitted against it.
+This repository contains instructions to spin up a local Mesos cluster using Docker, and provides example code for a custom `Scheduler` that allows arbitrary shell commands to be executed on the cluster. (Including, of course, the traditional `echo "Hello, World!"`).
 
 ### Assumptions
 * You are using OSX / MacOS and have Docker Machine installed
@@ -71,6 +71,7 @@ docker run -d --net=mesosnet --ip=172.20.0.12 --privileged \
 
 * Exhibitor UI: [http://172.20.0.10:8080/exhibitor/v1/ui/index.html](http://172.20.0.10:8080/exhibitor/v1/ui/index.html)
 * Mesos Master UI: [http://172.20.0.11:5050/](http://172.20.0.11:5050/)
+* Mesos Slave API (example): [http://172.20.0.12:5051/system/stats.json](http://172.20.0.12:5051/system/stats.json)
 
 ### Run the Hello-World App
 
@@ -85,7 +86,7 @@ sbt -Djava.library.path=/usr/local/Cellar/mesos/1.1.0/lib
 At the prompt:
 
 ```
-run "/bin/echo 'Hello, World!'"
+run "echo 'Hello, World!'"
 ```
 
 This blocks until a suitable offer is received to run it. You can verify this by running `docker stop` on the slave, invoking the run command (it will block), then running `docker start` on the slave.
@@ -100,7 +101,7 @@ Received SUBSCRIBED event
 Subscribed executor on 172.20.0.12
 Received LAUNCH event
 Starting task task1481039864427
-/usr/libexec/mesos/mesos-containerizer launch --command="{"shell":true,"value":"\/bin\/echo 'Hello, World!'"}" --help="false" --unshare_namespace_mnt="false"
+/usr/libexec/mesos/mesos-containerizer launch --command="{"shell":true,"value":"echo 'Hello, World!'"}" --help="false" --unshare_namespace_mnt="false"
 Forked command at 202
 Hello, World!
 Command exited with status 0 (pid: 202)
